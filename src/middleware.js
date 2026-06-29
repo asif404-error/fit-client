@@ -15,18 +15,17 @@ export function middleware(request) {
     } catch {}
   }
 
-  // Redirect logged-in users away from auth pages
   if (authRoutes.includes(pathname) && token) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // Protect dashboard routes
+
   if (pathname.startsWith("/dashboard")) {
     if (!token) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
-    // Role-based protection
+
     if (pathname.startsWith("/dashboard/admin") && role !== "admin") {
       return NextResponse.redirect(new URL("/", request.url));
     }
@@ -35,7 +34,6 @@ export function middleware(request) {
     }
   }
 
-  // Protect private routes
   const privateRoutes = ["/classes/", "/forum/", "/payment"];
   const isPrivate = privateRoutes.some(
     (route) => pathname.startsWith(route) && pathname !== "/classes" && pathname !== "/forum"
